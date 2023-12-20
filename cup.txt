@@ -1,0 +1,149 @@
+///////////////////////CUPCAKE/////////
+//////XML//////////
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <Spinner
+        android:id="@+id/cakespin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:minHeight="48dp"
+        android:spinnerMode="dropdown"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <EditText
+        android:id="@+id/qnty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cakespin"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Quantity"
+        android:inputType="number"
+        android:minHeight="48dp" />
+
+    <EditText
+        android:id="@+id/price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/qnty"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Price"
+        android:inputType="numberDecimal"
+        android:minHeight="48dp" />
+
+    <Button
+        android:id="@+id/pob"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/price"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Place Order" />
+
+</LinearLayout>
+MainActivity.kt
+
+package com.example.cakee
+import android.content.Intent
+import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Spinner
+import androidx.appcompat.app.AppCompatActivity
+
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var cakespin: Spinner
+    private lateinit var qnty: EditText
+    private lateinit var price: EditText
+    private lateinit var pob: Button
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        cakespin = findViewById(R.id.cakespin)
+        qnty= findViewById(R.id.qnty)
+        price = findViewById(R.id.price)
+        pob= findViewById(R.id.pob)
+        val cakeTypes = listOf("Chocii Cake", "Vanilla Cake", "Strawberry")
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, cakeTypes)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        cakespin.adapter = adapter
+        pob.setOnClickListener {
+            placeOrder()
+        }
+    }
+     fun placeOrder() {
+        val cakeType = cakespin.selectedItem.toString()
+        val quantity = qnty.text.toString()
+        val price = price.text.toString()
+        val intent = Intent(this, OrdersDetailActivity::class.java)
+        intent.putExtra("cakeType", cakeType)
+        intent.putExtra("quantity", quantity)
+        intent.putExtra("price", price)
+
+        startActivity(intent)
+    }
+}
+activity_orders_detail.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".OrdersDetailActivity">
+    <TextView
+        android:id="@+id/orderDet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Order Details"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+</LinearLayout>
+OrdersDetailActivity.kt
+package com.example.cakee
+import android.os.Bundle
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+class OrdersDetailActivity : AppCompatActivity() {
+    private lateinit var orderDet: TextView
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_orders_detail)
+        orderDet = findViewById(R.id.orderDet)
+        val cakeType = intent.getStringExtra("cakeType")
+        val quantity = intent.getStringExtra("quantity")
+        val price = intent.getStringExtra("price")
+
+        val orderDetailsText = "Order Details:\n\n" +
+                "Cake Type: $cakeType\n" +
+                "Quantity: $quantity\n" +
+                "Price: $price"
+
+        orderDet.text = orderDetailsText
+    }
+}
+
+
