@@ -329,3 +329,5 @@ class MainActivity : AppCompatActivity() {
 
 }
 
+after this open grade second one and paste this in dependencies
+implementation 'net.objecthunter:exp4j:0.4.8'
