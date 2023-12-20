@@ -1,0 +1,119 @@
+/////////////////////studentdatabase/////////////////
+////////////////xml///////////////
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <EditText
+        android:id="@+id/text12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="136dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:minHeight="48dp"
+        android:text="Name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/but"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="122dp"
+        android:text="Button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text12" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="203dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="104dp"
+        android:text="enter course:"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.48"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+//////////////////////////mainactivity.java/////////////////
+package com.example.datsto;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        EditText course=findViewById(R.id.text12);
+        Button button=findViewById(R.id.but);
+        DBHandler dbhandler= new DBHandler(MainActivity.this);
+        button.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String name=course.getText().toString();
+                        if(name.isEmpty()){
+                            Toast.makeText(MainActivity.this,"Please enter name of the course",Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                        dbhandler.addNewCourse(name);
+                        course.setText("");
+                    }
+                }
+        );
+    }
+}
+/////////////////////DBHandler.java///////////////
+package com.example.datsto;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+import androidx.annotation.Nullable;
+
+public class DBHandler extends SQLiteOpenHelper {
+    private static final String dbname="coursedb";
+    private static final int dbversion=1;
+    private static final String table="mycoursedb";
+    private static final String id="id";
+    private static final String namecol="name";
+    public DBHandler(@Nullable Context context) {
+        super(context, dbname, null,dbversion);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase sqLiteDatabase) {
+        String query = "CREATE TABLE " + table + "(" + id + " INTEGER PRIMARY KEY AUTOINCREMENT," + namecol + " TEXT);";
+        sqLiteDatabase.execSQL(query);
+    }
+    public void addNewCourse(String name){
+        SQLiteDatabase db=this.getWritableDatabase();
+        ContentValues values=new ContentValues();
+        values.put(namecol,name);
+        db.insert(table,null,values);
+        db.close();
+    }
+    @Override
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS "+table);
+        onCreate(sqLiteDatabase);
+    }
+}
