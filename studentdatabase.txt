@@ -1,20 +1,25 @@
 dbhandler
 ------------------
+package com.example.a0xdatabasestoring;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class DBHandler extends SQLiteOpenHelper { 
+public class DBHandler extends SQLiteOpenHelper {
     private static final String DB_NAME = "coursedb";
-    private static final int DB_VERSION = 1;
-    
+    private static final int DB_VERSION = 2;
+
     private static final String TABLE_NAME = "mycourses";
-    
-    private static final String ID_COL = "id";
+
+    private static final String ID_COL = "COURSE_ID";
 
     // below variable is for our course name column
-    private static final String NAME_COL = "name";
+    private static final String NAME_COL = "COURSE_NAME";
+    private static final String COURSE_TRACK = "COURSE_TRACK";
+    private static final String COURSE_DURATION = "COURSE_DURATION";
+    private static final String COURSE_DESCRIPTION = "COURSE_DESCRIPTION";
     public DBHandler(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
@@ -26,9 +31,15 @@ public class DBHandler extends SQLiteOpenHelper {
         // an sqlite query and we are
         // setting our column names
         // along with their data types.
+//        String query = "CREATE TABLE " + TABLE_NAME + " ("
+//                + ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+//                + NAME_COL + " TEXT )";
         String query = "CREATE TABLE " + TABLE_NAME + " ("
                 + ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + NAME_COL + " TEXT )";
+                + NAME_COL + " TEXT, "
+                + COURSE_TRACK + " TEXT, "
+                + COURSE_DURATION + " TEXT, "
+                + COURSE_DESCRIPTION + " TEXT)";
 
         // at last we are calling a exec sql
         // method to execute above sql query
@@ -43,27 +54,32 @@ public class DBHandler extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 
         values.put(NAME_COL, courseName);
-     
+        values.put(COURSE_TRACK, courseTracks);
+        values.put(COURSE_DURATION, courseDuration);
+        values.put(COURSE_DESCRIPTION, courseDescription);
+
         db.insert(TABLE_NAME, null, values);
 
         db.close();
     }
-
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // this method is called to check if the table exists already.
+        // Drop the existing table
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+
+        // Recreate the table with the new structure
         onCreate(db);
     }
-}
 
+}
 
 
 
 
 -----------------------------
 mainactivity
-mport android.os.Bundle;
+package com.example.a0xdatabasestoring;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -71,7 +87,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.datastorage.DBHandler;
+import com.example.a0xdatabasestoring.DBHandler;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -127,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 }
+
 --------------------------------------------------------
 xml
 <?xml version="1.0" encoding="utf-8"?>
