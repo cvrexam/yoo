@@ -1,0 +1,2353 @@
+﻿7.Spinner
+xml:
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
+
+        <Spinner
+                android:id="@+id/spinner"
+                android:layout_width="409dp"
+                android:layout_height="wrap_content"
+                tools:layout_editor_absoluteX="1dp"
+                tools:layout_editor_absoluteY="147dp"
+                tools:ignore="MissingConstraints" />
+
+        <ImageView
+                android:id="@+id/i1"
+                android:layout_width="207dp"
+                android:layout_height="241dp"
+                app:srcCompat="@drawable/apple"
+                tools:layout_editor_absoluteX="102dp"
+                tools:layout_editor_absoluteY="264dp"
+                tools:ignore="MissingConstraints" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+kt:
+package com.example.pract1
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.widget.Spinner
+import android.widget.ImageView
+import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.AdapterView
+import java.util.Objects
+
+class MainActivity : AppCompatActivity() {
+        override fun onCreate(savedInstanceState: Bundle?) {
+                super.onCreate(savedInstanceState)
+                setContentView(R.layout.activity_main)
+                val fruits=resources.getStringArray(R.array.fruits)
+                val spinner1=findViewById<Spinner>(R.id.spinner)
+                if(spinner1!=null)
+                {
+                        val adapter=ArrayAdapter(this,android.R.layout.simple_spinner_item,fruits)
+                        spinner1.adapter=adapter
+                        spinner1.onItemSelectedListener=object : AdapterView.OnItemSelectedListener{
+                                override fun onItemSelected(
+                                        parent: AdapterView<*>?,
+                                        view: View?,
+                                        position: Int,
+                                        id: Long
+                                ) {
+                                        val i:ImageView=findViewById(R.id.i1)
+                                        if(fruits[position]== "apple"){
+                                                i.setImageResource(R.drawable.apple)
+                                        }
+                                        if(fruits[position]== "mangos"){
+                                                i.setImageResource(R.drawable.mangos)
+                                        }
+                                        if(fruits[position]== "banana"){
+                                                i.setImageResource(R.drawable.banana)
+                                        }
+                                }
+
+                                override fun onNothingSelected(parent: AdapterView<*>?) {
+                                        TODO("Not yet implemented")
+                                }
+                        }
+
+                }
+        }
+}
+
+res>values>strings.xml
+<resources>
+        <string name="app_name">pract1</string>
+        <string name="selected_item">selected_item</string>
+        <string-array name="fruits">
+                <item>apple</item>
+                <item>banana</item>
+                <item>mango</item>
+        </string-array>
+</resources>
+
+
+6.DBHandler
+xml:
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".MainActivity">
+
+        <!--Edit text to enter course name-->
+        <EditText
+                android:id="@+id/idEdtCourseName"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_margin="10dp"
+                android:hint="Enter course Name" />
+
+        <!--edit text to enter course duration-->
+        <EditText
+                android:id="@+id/idEdtCourseDuration"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_margin="10dp"
+                android:hint="Enter Course Duration" />
+
+        <!--edit text to display course tracks-->
+        <EditText
+                android:id="@+id/idEdtCourseTracks"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_margin="10dp"
+                android:hint="Enter Course Tracks" />
+
+        <!--edit text for course description-->
+        <EditText
+                android:id="@+id/idEdtCourseDescription"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_margin="10dp"
+                android:hint="Enter Course Description" />
+
+        <!--button for adding new course-->
+        <Button
+                android:id="@+id/idBtnAddCourse"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="Add Course"
+                android:textAllCaps="false" />
+
+</LinearLayout>
+main activity.java
+package com.example.dbstorage;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+        private EditText courseNameEdt, courseTracksEdt, courseDurationEdt, courseDescriptionEdt;
+        private Button addCourseBtn;
+        private DBHandler dbHandler;
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+                super.onCreate(savedInstanceState);
+                setContentView(R.layout.activity_main);
+
+                // initializing all our variables.
+                courseNameEdt = findViewById(R.id.idEdtCourseName);
+                courseTracksEdt = findViewById(R.id.idEdtCourseTracks);
+                courseDurationEdt = findViewById(R.id.idEdtCourseDuration);
+                courseDescriptionEdt = findViewById(R.id.idEdtCourseDescription);
+                addCourseBtn = findViewById(R.id.idBtnAddCourse);
+
+                // creating a new dbhandler class
+                // and passing our context to it.
+                dbHandler = new DBHandler(MainActivity.this);
+
+                // below line is to add on click listener for our add course button.
+                addCourseBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                                // below line is to get data from all edit text fields.
+                                String courseName = courseNameEdt.getText().toString();
+                                String courseTracks = courseTracksEdt.getText().toString();
+                                String courseDuration = courseDurationEdt.getText().toString();
+                                String courseDescription = courseDescriptionEdt.getText().toString();
+
+                                // validating if the text fields are empty or not.
+                                if (courseName.isEmpty() && courseTracks.isEmpty() && courseDuration.isEmpty() && courseDescription.isEmpty()) {
+                                        Toast.makeText(MainActivity.this, "Please enter all the data..", Toast.LENGTH_SHORT).show();
+                                        return;
+                                }
+
+                                // on below line we are calling a method to add new
+                                // course to sqlite data and pass all our values to it.
+                                dbHandler.addNewCourse(courseName, courseDuration, courseDescription, courseTracks);
+
+                                // after adding the data we are displaying a toast message.
+                                Toast.makeText(MainActivity.this, "Course has been added.", Toast.LENGTH_SHORT).show();
+                                courseNameEdt.setText("");
+                                courseDurationEdt.setText("");
+                                courseTracksEdt.setText("");
+                                courseDescriptionEdt.setText("");
+                        }
+                });
+        }
+}
+db handler.java
+package com.example.dbstorage;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+public class DBHandler extends SQLiteOpenHelper {
+        private static final String DB_NAME = "coursed.sqlite";
+        private static final int DB_VERSION = 1;
+
+        private static final String TABLE_NAME = "coursetable";
+
+        private static final String ID_COL = "id";
+
+        // below variable is for our course name column
+        private static final String NAME_COL = "name";
+        private static final String DUR_COL="duration";
+        private static final String DES_COL="description";
+        private static final String TRA_COL="tracks";
+        public DBHandler(Context context) {
+                super(context, DB_NAME, null, DB_VERSION);
+        }
+
+        // below method is for creating a database by running a sqlite query
+        @Override
+        public void onCreate(SQLiteDatabase db) {
+                // on below line we are creating
+                // an sqlite query and we are
+                // setting our column names
+                // along with their data types.
+                String query = "CREATE TABLE " + TABLE_NAME + " ("
+                                + ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                                + NAME_COL + " TEXT ,"
+                                + DUR_COL + " TEXT ,"
+                                + DES_COL + " TEXT ,"
+                                + TRA_COL + " TEXT    )";
+
+                // at last we are calling a exec sql
+                // method to execute above sql query
+                db.execSQL(query);
+        }
+
+        // this method is use to add new course to our sqlite database.
+        public void addNewCourse(String courseName, String courseDuration, String courseDescription, String courseTracks) {
+
+                SQLiteDatabase db = this.getWritableDatabase();
+
+                ContentValues values = new ContentValues();
+
+                values.put(NAME_COL, courseName);
+                values.put(DUR_COL, courseDuration);
+                values.put(DES_COL, courseDescription);
+                values.put(TRA_COL, courseTracks);
+
+                db.insert(TABLE_NAME, null, values);
+
+                db.close();
+        }
+
+        @Override
+        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+                // this method is called to check if the table exists already.
+                db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+                onCreate(db);
+        }
+}
+output:Start app>Go to App Insection>apply lock>click on database name>run the app>check the column
+
+10.a).Rolling Die with image
+xml:
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".MainActivity">
+
+        <TextView
+                android:id="@+id/t1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="" />
+
+        <Button
+                android:id="@+id/b1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Roll" />
+
+        <ImageView
+                android:id="@+id/i1"
+                android:layout_width="match_parent"
+                android:layout_height="174dp"
+                app:srcCompat="@drawable/d1" />
+
+</LinearLayout>
+kt:
+package com.example.pract2
+
+import android.annotation.SuppressLint
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
+import org.w3c.dom.Text
+
+class MainActivity : AppCompatActivity() {
+        @SuppressLint("MissingInflatedId")
+        override fun onCreate(savedInstanceState: Bundle?) {
+                var images= arrayOf(R.drawable.d1,R.drawable.d2,R.drawable.d3,R.drawable.d4,R.drawable.d5,R.drawable.d6)
+                super.onCreate(savedInstanceState)
+                setContentView(R.layout.activity_main)
+                var resbtn:Button = findViewById(R.id.b1)
+                resbtn.setOnClickListener { rollDie() }
+        }
+        private fun rollDie()
+        {
+                var dice=Dice(6)
+                val diceroll=dice.roll()
+                val tv:TextView=findViewById(R.id.t1)
+                val img:ImageView=findViewById(R.id.i1)
+                var images= arrayOf(R.drawable.d1,R.drawable.d2,R.drawable.d3,R.drawable.d4,R.drawable.d5,R.drawable.d6)
+                val a=diceroll.toString()
+                if(a=="1")
+                {
+                        tv.text="one"
+                        img.setImageResource(images[0])
+                }
+                if(a=="2")
+                {
+                        tv.text="two"
+                        img.setImageResource(images[1])
+                }
+                if(a=="3")
+                {
+                        tv.text="three"
+                        img.setImageResource(images[2])
+                }
+                if(a=="4")
+                {
+                        tv.text="four"
+                        img.setImageResource(images[3])
+                }
+                if(a=="5")
+                {
+                        tv.text="five"
+                        img.setImageResource(images[4])
+                }
+                if(a=="6")
+                {
+                        tv.text="six"
+                        img.setImageResource(images[5])
+                }
+        }
+        class Dice(private val numSides: Number)
+        {
+                fun roll() : Int
+                {
+                        return (1..numSides as Int).random()
+                }
+        }
+}
+
+11a.Calculator
+xml:
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
+
+        <LinearLayout
+                android:layout_width="408dp"
+                android:layout_height="624dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:ignore="MissingConstraints"
+                tools:layout_editor_absoluteY="36dp">
+
+                <TextView
+                        android:id="@+id/expression"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:textSize="24sp"
+                        android:gravity="center"
+                        android:orientation="horizontal" />
+
+                <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                                android:id="@+id/result"
+                                android:layout_width="212dp"
+                                android:layout_height="100dp"
+                                android:gravity="center"
+                                android:textSize="24sp" />
+
+                        <TextView
+                                android:id="@+id/clear"
+                                android:layout_width="192dp"
+                                android:layout_height="100dp"
+                                android:gravity="center"
+                                android:text="C"
+                                android:textSize="24sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                                android:id="@+id/one"
+                                android:layout_width="100dp"
+                                android:layout_height="100dp"
+                                android:textSize="24sp"
+                                android:text="1"
+                                android:gravity="center"/>
+
+                        <TextView
+                                android:id="@+id/two"
+                                android:layout_width="100dp"
+                                android:layout_height="100dp"
+                                android:textSize="24sp"
+                                android:text="2"
+                                android:gravity="center"/>
+
+                        <TextView
+                                android:id="@+id/three"
+                                android:layout_width="100dp"
+                                android:layout_height="100dp"
+                                android:textSize="24sp"
+                                android:gravity="center"
+                                android:text="3" />
+
+                        <TextView
+                                android:id="@+id/division"
+                                android:layout_width="100dp"
+                                android:layout_height="100dp"
+                                android:textSize="24sp"
+                                android:gravity="center"
+                                android:text="/" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                                android:id="@+id/four"
+                                android:layout_width="100dp"
+                                android:layout_height="100dp"
+                                android:textSize="24sp"
+                                android:gravity="center"
+                                android:text="4" />
+
+                        <TextView
+                                android:id="@+id/five"
+                                android:layout_width="100dp"
+                                android:layout_height="100dp"
+                                android:textSize="24sp"
+                                android:gravity="center"
+                                android:text="5" />
+
+                        <TextView
+                                android:id="@+id/six"
+                                android:layout_width="100dp"
+                                android:layout_height="100dp"
+                                android:textSize="24sp"
+                                android:gravity="center"
+                                android:text="6" />
+
+                        <TextView
+                                android:id="@+id/multiplication"
+                                android:layout_width="100dp"
+                                android:layout_height="100dp"
+                                android:textSize="24sp"
+                                android:gravity="center"
+                                android:text="*" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                                android:id="@+id/seven"
+                                android:layout_width="100dp"
+                                android:layout_height="100dp"
+                                android:textSize="24sp"
+                                android:gravity="center"
+                                android:text="7" />
+
+                        <TextView
+                                android:id="@+id/eight"
+                                android:layout_width="100dp"
+                                android:layout_height="100dp"
+                                android:textSize="24sp"
+                                android:gravity="center"
+                                android:text="8" />
+
+                        <TextView
+                                android:id="@+id/nine"
+                                android:layout_width="100dp"
+                                android:layout_height="100dp"
+                                android:textSize="24sp"
+                                android:gravity="center"
+                                android:text="9" />
+
+                        <TextView
+                                android:id="@+id/addition"
+                                android:layout_width="100dp"
+                                android:layout_height="100dp"
+                                android:textSize="24sp"
+                                android:gravity="center"
+                                android:text="+" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                                android:id="@+id/subtraction"
+                                android:layout_width="100dp"
+                                android:layout_height="100dp"
+                                android:textSize="24sp"
+                                android:gravity="center"
+                                android:text="-" />
+
+                        <TextView
+                                android:id="@+id/per"
+                                android:layout_width="100dp"
+                                android:layout_height="100dp"
+                                android:textSize="24sp"
+                                android:gravity="center"
+                                android:text="%" />
+
+                        <TextView
+                                android:id="@+id/zero"
+                                android:layout_width="100dp"
+                                android:layout_height="100dp"
+                                android:textSize="24sp"
+                                android:gravity="center"
+                                android:text="0" />
+
+                        <TextView
+                                android:id="@+id/equalss"
+                                android:layout_width="100dp"
+                                android:layout_height="100dp"
+                                android:textSize="24sp"
+                                android:gravity="center"
+                                android:text="=" />
+
+                </LinearLayout>
+
+        </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+kt:
+package com.example.calculator
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.widget.TextView
+import net.objecthunter.exp4j.ExpressionBuilder
+
+class MainActivity : AppCompatActivity() {
+        private lateinit var zero:TextView
+        private lateinit var one:TextView
+        private lateinit var two:TextView
+        private lateinit var three:TextView
+        private lateinit var four:TextView
+        private lateinit var five:TextView
+        private lateinit var six:TextView
+        private lateinit var seven:TextView
+        private lateinit var eight:TextView
+        private lateinit var nine:TextView
+        private lateinit var addition:TextView
+        private lateinit var subtraction:TextView
+        private lateinit var division:TextView
+        private lateinit var multiplication:TextView
+        private lateinit var result:TextView
+        private lateinit var expression:TextView
+        private lateinit var clear:TextView
+        private lateinit var equalss:TextView
+        private lateinit var per:TextView
+
+
+        override fun onCreate(savedInstanceState: Bundle?) {
+                super.onCreate(savedInstanceState)
+                setContentView(R.layout.activity_main)
+                zero=findViewById(R.id.zero)
+                zero.setOnClickListener{
+                        pressButton("0",true)
+                }
+                one=findViewById(R.id.one)
+                one.setOnClickListener{
+                        pressButton("1",true)
+                }
+                two=findViewById(R.id.two)
+                two.setOnClickListener{
+                        pressButton("2",true)
+                }
+                three=findViewById(R.id.three)
+                three.setOnClickListener{
+                        pressButton("3",true)
+                }
+                four=findViewById(R.id.four)
+                four.setOnClickListener{
+                        pressButton("4",true)
+                }
+                five=findViewById(R.id.five)
+                five.setOnClickListener{
+                        pressButton("5",true)
+                }
+                six=findViewById(R.id.six)
+                six.setOnClickListener{
+                        pressButton("6",true)
+                }
+                seven=findViewById(R.id.seven)
+                seven.setOnClickListener{
+                        pressButton("7",true)
+                }
+                eight=findViewById(R.id.eight)
+                eight.setOnClickListener{
+                        pressButton("8",true)
+                }
+                nine=findViewById(R.id.nine)
+                nine.setOnClickListener{
+                        pressButton("9",true)
+                }
+                addition=findViewById(R.id.addition)
+                addition.setOnClickListener{
+                        pressButton("+",true)
+                }
+                subtraction=findViewById(R.id.subtraction)
+                subtraction.setOnClickListener{
+                        pressButton("-",true)
+                }
+                division=findViewById(R.id.division)
+                division.setOnClickListener{
+                        pressButton("/",true)
+                }
+                multiplication=findViewById(R.id.multiplication)
+                multiplication.setOnClickListener{
+                        pressButton("*",true)
+                }
+                per=findViewById(R.id.per)
+                per.setOnClickListener{
+                        pressButton("%",true)
+                }
+                result=findViewById(R.id.result)
+                expression=findViewById(R.id.expression)
+                clear=findViewById(R.id.clear)
+                clear.setOnClickListener{
+                        result.text=""
+                        expression.text=""
+                }
+                equalss=findViewById(R.id.equalss)
+                equalss.setOnClickListener{
+                        val text=expression.text.toString()
+                        val expression=ExpressionBuilder(text).build()
+                        val expResult=expression.evaluate()
+                        val longResult=expResult.toLong()
+                        if(expResult==longResult.toDouble()){
+                                result.text=longResult.toString()
+                        }
+                        else{
+                                result.text=result.toString()
+                        }
+                }
+        }
+
+        fun pressButton(string: String, clear: Boolean) {
+                if(clear){
+                        result.text=""
+                        expression.append(string)
+                }
+                else{
+                        expression.append(result.text)
+                        expression.append(string)
+                        result.text=""
+                }
+        }
+}
+
+1.sleeptracker
+ACTIVITY_MAIN.XML
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".MainActivity">
+
+        <!--Text view to Display Sleep Tracker-->
+        <TextView
+                android:id="@+id/SleepTracker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        <!--Edit text to enter Present time-->
+
+
+        <!--button for starting-->
+
+        <EditText
+                android:id="@+id/TimeView"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_margin="10dp"
+                android:hint="Present Time" />
+
+        <Button
+                android:id="@+id/StartBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="START"
+                android:textAllCaps="false" />
+
+        <!--button for stopping-->
+        <Button
+                android:id="@+id/StopBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="STOP"
+                android:textAllCaps="false" />
+
+</LinearLayout>
+
+MAINACTIVITY.JAVA
+package com.example.sleeptracker;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Calendar;
+
+public class MainActivity extends AppCompatActivity {
+
+        private TextView SleepTracker;
+        private EditText TimeView;
+        private Button StartBtn, StopBtn;
+
+        private Date startTime;
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+                super.onCreate(savedInstanceState);
+                setContentView(R.layout.activity_main);
+
+                SleepTracker = findViewById(R.id.SleepTracker);
+                TimeView = findViewById(R.id.TimeView);
+                StartBtn = findViewById(R.id.StartBtn);
+                StopBtn = findViewById(R.id.StopBtn);
+
+                StartBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                                startTime = Calendar.getInstance().getTime();
+                                TimeView.setText(formatTime(startTime));
+                                Toast.makeText(MainActivity.this, "Timer Started", Toast.LENGTH_SHORT).show();
+                        }
+                });
+
+                StopBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                                Date endTime = Calendar.getInstance().getTime();
+                                TimeView.setText(formatTime(endTime));
+
+                                // Calculate the duration
+                                long durationMillis = endTime.getTime() - startTime.getTime();
+                                String duration = formatDuration(durationMillis);
+//                                System.out.println(duration);
+                                Toast.makeText(MainActivity.this, "Duration: " + duration, Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+
+                                // Pass the duration as an extra
+                                intent.putExtra("DURATION_EXTRA", duration);
+
+                                // Start the NextActivity
+                                startActivity(intent);
+
+                                // Clear the TimeView
+                                TimeView.setText("");
+                        }
+                });
+        }
+
+        // Helper method to format Date to a string
+        private String formatTime(Date date) {
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+                return sdf.format(date);
+        }
+
+        // Helper method to format duration from milliseconds to HH:mm:ss
+        private String formatDuration(long durationMillis) {
+                long seconds = durationMillis / 1000;
+                long minutes = seconds / 60;
+                long hours = minutes / 60;
+
+                return String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes % 60, seconds % 60);
+        }
+}
+
+ACTIVITY_HOME.XML
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:context=".HomeActivity">
+
+        <!--Text view to Display Sleep Tracker-->
+        <TextView
+                android:id="@+id/Screen2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="User slept time is "/>
+
+        <!--Edit text to Display Duration-->
+        <EditText
+                android:id="@+id/TimeView"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_margin="10dp"
+                android:hint="Time Slept" />
+
+        <!--button for saving-->
+        <Button
+                android:id="@+id/SaveBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="SAVE"
+                android:textAllCaps="false" />
+
+</LinearLayout>
+
+HomeActivity.java
+package com.example.sleeptracker;
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.io.File;
+import java.io.FileWriter;
+
+public class HomeActivity extends AppCompatActivity {
+
+        private TextView Screen2;
+
+        private EditText TimeView;
+        private Button SaveBtn;
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+                super.onCreate(savedInstanceState);
+                setContentView(R.layout.activity_home);
+
+                // initializing all our variables.
+                Screen2 = findViewById(R.id.Screen2);
+                TimeView = findViewById(R.id.TimeView);
+                SaveBtn = findViewById(R.id.SaveBtn);
+                // Retrieve the duration from the Intent
+                String duration1 = getIntent().getStringExtra("DURATION_EXTRA");
+                System.out.println(duration1);
+                // Set the duration in the EditText
+                TimeView.setText(duration1);
+                // below line is to add on click listener for our add course button.
+                SaveBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                                if(!TimeView.getText().toString().isEmpty()){
+                                        File file =new File(HomeActivity.this.getFilesDir(),"text");
+                                        if(!file.exists()){
+                                                file.mkdir();
+                                        }
+                                        try {
+                                                File gpxfile=new File(file,"qwertyuiop");
+                                                FileWriter writer=new FileWriter(gpxfile);
+                                                writer.append(TimeView.getText().toString());
+                                                writer.flush();
+                                                writer.close();
+                                                Toast.makeText(HomeActivity.this,"Saved your Text",Toast.LENGTH_LONG).show();
+                                        }
+                                        catch (Exception e){}
+                                }
+                                // validating if the text fields are empty or not.
+                                if (duration1.isEmpty()) {
+                                        Toast.makeText(HomeActivity.this, "Please enter all the data..", Toast.LENGTH_SHORT).show();
+                                        return;
+                                }
+
+                                // on below line we are calling a method to add new
+                                // course to sqlite data and pass all our values to it.
+                                //dbHandler.addNewDuration(duration);
+
+                                // after adding the data we are displaying a toast message.
+                                Toast.makeText(HomeActivity.this, "Duration has been added.", Toast.LENGTH_SHORT).show();
+                                TimeView.setText("");
+                        }
+                });
+        }
+}
+
+manifest
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools">
+
+        <application
+                android:allowBackup="true"
+                android:dataExtractionRules="@xml/data_extraction_rules"
+                android:fullBackupContent="@xml/backup_rules"
+                android:icon="@mipmap/ic_launcher"
+                android:label="@string/app_name"
+                android:supportsRtl="true"
+                android:theme="@style/Theme.Sleeptracker"
+                tools:targetApi="31">
+                <activity
+                        android:name=".MainActivity"
+                        android:exported="true">
+                        <intent-filter>
+                                <action android:name="android.intent.action.MAIN" />
+
+                                <category android:name="android.intent.category.LAUNCHER" />
+                        </intent-filter>
+                </activity>
+                <activity
+                        android:name=".HomeActivity"
+                        android:exported="true">
+                        <intent-filter>
+                                <action android:name="android.intent.action.MAIN" />
+
+                                <category android:name="android.intent.category.LAUNCHER" />
+                        </intent-filter>
+                </activity>
+        </application>
+
+</manifest>
+
+5.Affirmation
+activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp"
+        tools:context=".MainActivity">
+
+        <TextView
+                android:id="@+id/textViewCSEA"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CSEA"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="showDetails" />
+
+        <TextView
+                android:id="@+id/textViewCSEB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CSEB"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="showDetails" />
+</LinearLayout>
+
+mainactivity.kt
+package com.example.intentcse
+import android.content.Intent
+import android.os.Bundle
+import android.view.View
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+
+class MainActivity : AppCompatActivity() {
+
+        override fun onCreate(savedInstanceState: Bundle?) {
+                super.onCreate(savedInstanceState)
+                setContentView(R.layout.activity_main)
+        }
+
+        fun showDetails(view: View) {
+                val itemName = (view as TextView).text.toString()
+
+                val intent = Intent(this, DetailsActivity::class.java)
+                intent.putExtra("itemName", itemName)
+                startActivity(intent)
+        }
+}
+
+activity_details
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <TextView
+                android:id="@+id/detailsTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
+
+        <ImageView
+                android:id="@+id/detailsImageView"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_below="@id/detailsTextView"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:visibility="gone" />
+
+</RelativeLayout>
+
+Detailsactivity.java
+package com.example.intentcse
+
+import android.annotation.SuppressLint
+import android.os.Bundle
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import android.view.View
+
+class DetailsActivity : AppCompatActivity() {
+
+        @SuppressLint("MissingInflatedId")
+        override fun onCreate(savedInstanceState: Bundle?) {
+                super.onCreate(savedInstanceState)
+                setContentView(R.layout.activity_details)
+
+                val itemName = intent.getStringExtra("itemName")
+                val detailsTextView = findViewById<TextView>(R.id.detailsTextView)
+                val detailsImageView = findViewById<ImageView>(R.id.detailsImageView)
+
+                val details = "Details for $itemName"
+                if(itemName=="CSEA") {
+                        val imageResource = R.drawable.sample_image1
+                        detailsTextView.text = details
+                        detailsImageView.setImageResource(imageResource)
+                        detailsImageView.visibility = View.VISIBLE
+                }
+                else{
+                        val imageResource = R.drawable.sample_image2
+                        detailsTextView.text = details
+                        detailsImageView.setImageResource(imageResource)
+                        detailsImageView.visibility = View.VISIBLE
+                }
+        }
+}
+
+
+
+11b.Dwellings
+import kotlin.math.PI
+
+fun main() {
+   val squareCabin = SquareCabin(6, 50.0)
+   val roundHut = RoundHut(3, 10.0)
+   val roundTower = RoundTower(4, 15.5)
+
+   with(squareCabin) {
+       println("\nSquare Cabin\n============")
+       println("Floor area: ${floorArea()}")
+   }
+
+   with(roundHut) {
+       println("\nRound Hut\n=========")
+       println("Floor area: ${floorArea()}")
+   }
+
+   with(roundTower) {
+       println("\nRound Tower\n==========")
+       println("Floor area: ${floorArea()}")
+   }
+}
+
+abstract class Dwelling(private var residents: Int) {
+   abstract fun floorArea(): Double
+   }
+
+class SquareCabin(residents: Int, val length: Double) : Dwelling(residents) {
+   override fun floorArea(): Double {
+       return length * length
+   }
+
+}
+open class RoundHut(
+       residents: Int, val radius: Double) : Dwelling(residents) {
+   override fun floorArea(): Double {
+       return PI * radius * radius
+   }
+
+}
+class RoundTower(
+       residents: Int,
+       radius: Double,
+       val floors: Int = 2) : RoundHut(residents, radius) {
+   override fun floorArea(): Double {
+       return super.floorArea() * floors
+   }
+}
+
+10b.Getters:
+class Company{
+    var name:String=""
+    var clg:String=""
+    get()=field
+    set(value){
+        field=value
+    }
+}
+fun main(args:Array<String>) {
+    val c=Company()
+    c.name="Niklaus mikealson"
+    c.clg="caroline institutes"
+    println(c.name)
+    println(c.clg)
+}
+
+8.Student details disable button
+activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".MainActivity">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Login Application"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+                android:id="@+id/username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:height="50dp"
+                android:hint="Enter Username" />
+
+        <EditText
+                android:id="@+id/email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:height="50dp"
+                android:hint="Enter EmailID" />
+
+        <EditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:height="50dp"
+                android:hint="Enter password" />
+
+        <Button
+                android:id="@+id/login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Login" />
+</LinearLayout>
+
+mainactivity.kt
+package com.example.logindispbtn
+
+import android.R.attr.button
+import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+
+
+class MainActivity : AppCompatActivity()
+{
+        private lateinit var userET:EditText
+        private lateinit var emailET:EditText
+        private lateinit var passET:EditText
+        private lateinit var loginbtn:Button
+        override fun onCreate(savedInstanceState: Bundle?)
+        {
+                super.onCreate(savedInstanceState)
+                setContentView(R.layout.activity_main)
+                userET=findViewById(R.id.username)
+                emailET=findViewById(R.id.email)
+                passET=findViewById(R.id.password)
+                loginbtn=findViewById(R.id.login)
+
+                loginbtn.setEnabled(false)
+                emailET.addTextChangedListener(LoginWatcher);
+                passET.addTextChangedListener(LoginWatcher);
+
+
+                loginbtn.setOnClickListener {
+                        val user=userET.text.toString()
+                        val mail=emailET.text.toString()
+                        val pass=passET.text.toString()
+
+                        if(user.equals("manasa") && mail.equals("manasa@gmail.com") && pass.equals("1234"))
+                        {
+                                loginbtn.setEnabled(true)
+                                Toast.makeText(this,"login successful",Toast.LENGTH_LONG).show()
+                        }
+                        else
+                        {
+                                loginbtn.setEnabled(false)
+                                Toast.makeText(this,"login unsuccessful",Toast.LENGTH_LONG).show()
+                        }
+                }
+
+        }
+
+        var LoginWatcher: TextWatcher = object : TextWatcher {
+                override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
+
+                override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int)
+                {
+                        val userName: String = emailET.getText().toString()
+                        val userPass: String = passET.getText().toString()
+                        val userMail: String = emailET.getText().toString()
+                        loginbtn.setEnabled(!userName.isEmpty() && !userPass.isEmpty() && !userMail.isEmpty())
+                }
+
+                override fun afterTextChanged(editable: Editable) {}
+        }
+
+}
+
+3.Image navigation
+activity.xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
+
+        <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="162dp"
+                android:layout_height="159dp"
+                android:layout_marginBottom="32dp"
+                app:layout_constraintBottom_toTopOf="@+id/imageView3"
+                app:srcCompat="@drawable/apple"
+                tools:ignore="MissingConstraints"
+                tools:layout_editor_absoluteX="-2dp" />
+
+
+        <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="158dp"
+                android:layout_height="178dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="328dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:srcCompat="@drawable/banana" />
+
+        <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="192dp"
+                android:layout_height="170dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginBottom="328dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:srcCompat="@drawable/screenshot__5_" />
+        <Button
+                android:id="@+id/button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="160dp"
+                android:layout_marginTop="112dp"
+                android:text="select"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView4"
+                tools:ignore="MissingConstraints" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+mainactivity
+package com.example.imagenavig
+import android.annotation.SuppressLint
+import android.media.Image
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.widget.Button
+import android.widget.ImageView
+import android.content.Intent
+
+class MainActivity : AppCompatActivity()
+{
+        private lateinit var img1:ImageView
+        private lateinit var img2:ImageView
+        private lateinit var img3:ImageView
+        private lateinit var img4:ImageView
+        private lateinit var sel:Button
+        @SuppressLint("MissingInflatedId")
+        override fun onCreate(savedInstanceState: Bundle?)
+        {
+                super.onCreate(savedInstanceState)
+                setContentView(R.layout.activity_main)
+
+                img1=findViewById(R.id.imageView)
+                img3=findViewById(R.id.imageView3)
+                img4=findViewById(R.id.imageView4)
+
+                sel=findViewById(R.id.button)
+                var des:String?=null;
+                var imgs=R.drawable.mangos;
+
+                img1.setOnClickListener()
+                {
+                        des="mango"
+                        imgs=R.drawable.mangos
+                }
+
+                img3.setOnClickListener()
+                {
+                        des="grape"
+                        imgs=R.drawable.apple
+                }
+
+                img4.setOnClickListener()
+                {
+                        des="banana"
+                        imgs=R.drawable.banana
+                }
+
+                sel.setOnClickListener()
+                {
+                        val intent=Intent(this,HomeActivity::class.java)
+                        intent.putExtra("imgs",imgs);
+                        intent.putExtra("description",des);
+                        startActivity(intent);
+                }
+
+        }
+}
+
+activity_home.xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <EditText
+                android:id="@+id/result"
+                android:layout_width="409dp"
+                android:layout_height="57dp"
+                android:layout_marginTop="404dp"
+                android:ems="10"
+                android:inputType="textPersonName"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        <ImageView
+                android:id="@+id/image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_launcher_foreground"
+                tools:layout_editor_absoluteX="151dp"
+                tools:layout_editor_absoluteY="226dp"
+                tools:ignore="MissingConstraints" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+homeactivity
+package com.example.imagenavig
+
+import android.os.Bundle
+import android.widget.EditText
+import android.widget.TextView
+import android.content.Intent
+import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
+import com.example.imagenavig.R
+
+
+class HomeActivity: AppCompatActivity()
+{
+        private lateinit var result:EditText
+        private lateinit var img:ImageView
+
+        public override fun onCreate(savedInstanceState:Bundle?)
+        {
+                super.onCreate(savedInstanceState)
+                setContentView(R.layout.activity_home)
+
+                result=findViewById(R.id.result)
+                img=findViewById(R.id.image)
+                val intent:Intent=intent
+
+                val description=intent.getStringExtra("description");
+                val imageId = intent.getIntExtra("imgs",0);
+                img.setImageResource(imageId)
+
+                result.setText(description);
+        }
+}
+
+
+9.URL within application
+mainactivity.kt
+package com.example.numapp
+
+import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.webkit.WebView
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import android.webkit.WebViewClient
+
+class MainActivity : AppCompatActivity() {
+      private lateinit var numET:EditText
+      private lateinit var wordbtn:Button
+      private lateinit var resV:TextView
+      private lateinit var  urlbtn:Button
+      private lateinit var webv: WebView
+      override fun onCreate(savedInstanceState: Bundle?) {
+	 super.onCreate(savedInstanceState)
+	 setContentView(R.layout.activity_main)
+ 	 numET=findViewById(R.id.num)
+	 wordbtn=findViewById(R.id.words)
+	 resV=findViewById(R.id.res)
+	 urlbtn=findViewById(R.id.url)
+	 webv=findViewById(R.id.web)
+	 wordbtn.setOnClickListener {
+	 val num1=numET.text.toString()
+	if(num1.isNotEmpty()) {
+	val inum = num1.toInt();
+	val words=arrayOf("Zero","One","Two","Three","Four","Five","Six","Seven","Eight","Nine")
+	 if (inum >= 0 && inum < words.size)
+	{
+	 val textRep = words[inum]
+	 resV.setText(textRep)
+	 }
+	 else
+	 {
+	 resV.setText("Number out of range")
+	 }
+	}
+	 }
+	 urlbtn.setOnClickListener {
+	 webv.settings.javaScriptEnabled = true
+	 webv.loadUrl("https://www.google.com")
+	 webv.webViewClient = WebViewClient()
+	 }
+
+ }
+} 
+activity_xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="NumberApp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/num"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:height="50dp"
+        android:hint="Number" />
+
+    <Button
+        android:id="@+id/words"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Words" />
+
+    <TextView
+        android:id="@+id/res"
+        android:layout_width="match_parent"
+        android:layout_height="53dp"
+        android:height="500dp"
+        tools:visibility="visible" />
+
+    <Button
+        android:id="@+id/url"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="URL" />
+
+    <WebView
+        android:id="@+id/web"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+    </WebView>
+
+</LinearLayout> 
+
+2.RealEstate
+-------activity_main.xml----------------
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <EditText
+        android:id="@+id/editTextTextPersonName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="REAL ESTATES"
+        android:textAlignment="center"
+        android:textSize="34sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.275" />
+
+    <Button
+        android:id="@+id/b1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="visit now"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.412"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName"
+        app:layout_constraintVertical_bias="0.269" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+---------------MainActivity.kt------------------
+package com.example.business
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.content.Intent
+
+import android.widget.Button
+
+
+
+class MainActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        val  checkout=findViewById<Button>(R.id.b1)
+        checkout.setOnClickListener{
+            val intent = Intent(this,MainActivity2::class.java)
+            startActivity(intent)
+        }
+    }
+}
+---------------------------------------------------------------
+activity_main2.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity2">
+
+    <EditText
+        android:id="@+id/editTextTextPersonName2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Welcome "
+        android:textAlignment="center"
+        android:textSize="34sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.573"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.076" />
+
+    <ImageButton
+        android:id="@+id/ib1"
+        android:layout_width="181dp"
+        android:layout_height="142dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.116"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.283"
+        app:srcCompat="@drawable/r3" />
+
+    <ImageButton
+        android:id="@+id/ib2"
+        android:layout_width="181dp"
+        android:layout_height="141dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.588"
+        app:layout_constraintStart_toEndOf="@+id/ib1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.282"
+        app:srcCompat="@drawable/r4" />
+
+    <ImageButton
+        android:id="@+id/ib3"
+        android:layout_width="181dp"
+        android:layout_height="141dp"
+        android:layout_marginStart="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ib1"
+        app:layout_constraintVertical_bias="0.1"
+        app:srcCompat="@drawable/r5" />
+
+    <ImageButton
+        android:id="@+id/ib4"
+        android:layout_width="181dp"
+        android:layout_height="141dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="28dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.562"
+        app:layout_constraintStart_toEndOf="@+id/ib3"
+        app:layout_constraintTop_toBottomOf="@+id/ib2"
+        app:layout_constraintVertical_bias="0.031"
+        app:srcCompat="@drawable/r2" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+-----------------------------------------------------------------------
+MainActivity2.kt
+package com.example.business
+
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.widget.Button
+import android.widget.ImageButton
+
+class MainActivity2 : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main2)
+        val  visitnow=findViewById<ImageButton>(R.id.ib1)
+        visitnow.setOnClickListener{
+            val intent = Intent(this,MainActivity3::class.java)
+            startActivity(intent)
+        }
+        val  visitnow1=findViewById<ImageButton>(R.id.ib2)
+        visitnow1.setOnClickListener{
+            val intent = Intent(this,MainActivity4::class.java)
+            startActivity(intent)
+        }
+        val  visitnow2=findViewById<ImageButton>(R.id.ib3)
+        visitnow2.setOnClickListener{
+            val intent = Intent(this,MainActivity5::class.java)
+            startActivity(intent)
+        }
+        val  visitnow3=findViewById<ImageButton>(R.id.ib4)
+        visitnow3.setOnClickListener{
+            val intent = Intent(this,MainActivity6::class.java)
+            startActivity(intent)
+        }
+    }
+}
+--------------------------------------------------------------------------------
+activity_main3.xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity3">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="528dp"
+        android:layout_height="286dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.543"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.328"
+        app:srcCompat="@drawable/r3" />
+
+    <EditText
+        android:id="@+id/editTextTextPersonName3"
+        android:layout_width="413dp"
+        android:layout_height="109dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Rs. 25 lakhs"
+        android:textAlignment="center"
+        android:textSize="48sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.54"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.072" />
+
+    <EditText
+        android:id="@+id/editTextTextPersonName4"
+        android:layout_width="548dp"
+        android:layout_height="146dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="25o square yards"
+        android:textAlignment="center"
+        android:textSize="48sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.653"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName3"
+        app:layout_constraintVertical_bias="0.098" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+-------------------------------------------------------------------------------------
+MainActivity3.kt
+package com.example.business
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+
+class MainActivity3 : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main3)
+    }
+}
+-----------------------------------------------------------------------------------------
+activity_main4.xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity3">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="573dp"
+        android:layout_height="305dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.15"
+        app:srcCompat="@drawable/r4" />
+
+    <EditText
+        android:id="@+id/editTextTextPersonName3"
+        android:layout_width="413dp"
+        android:layout_height="109dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Rs. 25 lakhs"
+        android:textAlignment="center"
+        android:textSize="48sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.635" />
+
+    <EditText
+        android:id="@+id/editTextTextPersonName4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="250 square yards"
+        android:textAlignment="center"
+        android:textSize="48sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.78" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+--------------------------------------------------------------------
+MainActivity4.kt
+package com.example.business
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+
+class MainActivity4 : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main4)
+    }
+}
+-----------------------------------------
+activity_main5.xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity5">
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="258dp"
+        android:layout_height="176dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.297"
+        app:srcCompat="@drawable/r5" />
+
+    <EditText
+        android:id="@+id/editTextTextPersonName5"
+        android:layout_width="303dp"
+        android:layout_height="63dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Rs. 1.5 crore"
+        android:textAlignment="center"
+        android:textSize="34sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.562"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.572" />
+
+    <EditText
+        android:id="@+id/editTextTextPersonName6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="560 Square Yards"
+        android:textAlignment="center"
+        android:textSize="34sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.616"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.698" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+-------------------------------------------------------------------
+MainActivity5.kt
+package com.example.business
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+
+class MainActivity5 : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main5)
+    }
+}
+--------------------------------------------------------------------
+activity_main6.xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity6">
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="299dp"
+        android:layout_height="166dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.678"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.251"
+        app:srcCompat="@drawable/r2" />
+
+    <EditText
+        android:id="@+id/editTextTextPersonName7"
+        android:layout_width="319dp"
+        android:layout_height="77dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Rs. 98 lakhs"
+        android:textAlignment="center"
+        android:textSize="34sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/editTextTextPersonName8"
+        android:layout_width="349dp"
+        android:layout_height="73dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="800 Square yards"
+        android:textAlignment="center"
+        android:textSize="34sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.661" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+---------------------------------------------------------------
+MainActivity6.kt
+package com.example.business
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+
+class MainActivity6 : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main6)
+    }
+}
+
+4.cupcake
+activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+    <Spinner
+        android:id="@+id/cakespin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:minHeight="48dp"
+        android:spinnerMode="dropdown"
+        tools:ignore="SpeakableTextPresentCheck" />
+    <EditText
+        android:id="@+id/qnty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cakespin"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Quantity"
+        android:inputType="number"
+        android:minHeight="48dp" />
+    <EditText
+        android:id="@+id/price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/qnty"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Price"
+        android:inputType="numberDecimal"
+        android:minHeight="48dp" />
+    <Button
+        android:id="@+id/pob"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/price"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Place Order" />
+</LinearLayout>
+MainActivity.kt
+package com.example.cakee
+import android.content.Intent
+import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Spinner
+import androidx.appcompat.app.AppCompatActivity
+class MainActivity : AppCompatActivity() {
+    private lateinit var cakespin: Spinner
+    private lateinit var qnty: EditText
+    private lateinit var price: EditText
+    private lateinit var pob: Button
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        cakespin = findViewById(R.id.cakespin)
+        qnty= findViewById(R.id.qnty)
+        price = findViewById(R.id.price)
+        pob= findViewById(R.id.pob)
+        val cakeTypes = listOf("Chocii Cake", "Vanilla Cake", "Strawberry")
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, cakeTypes)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        cakespin.adapter = adapter
+        pob.setOnClickListener {
+            placeOrder()
+        }
+    }
+    fun placeOrder() {
+        val cakeType = cakespin.selectedItem.toString()
+        val quantity = qnty.text.toString()
+        val price = price.text.toString()
+        val intent = Intent(this, OrdersDetailActivity::class.java)
+        intent.putExtra("cakeType", cakeType)
+        intent.putExtra("quantity", quantity)
+        intent.putExtra("price", price)
+        startActivity(intent)
+    }
+}
+activity_orders_detail.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".OrdersDetailActivity">
+    <TextView
+        android:id="@+id/orderDet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Order Details"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+</LinearLayout>
+OrderDetailActivity.kt
+package com.example.cakee
+import android.os.Bundle
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+class OrdersDetailActivity : AppCompatActivity() {
+    private lateinit var orderDet: TextView
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_orders_detail)
+        orderDet = findViewById(R.id.orderDet)
+        val cakeType = intent.getStringExtra("cakeType")
+        val quantity = intent.getStringExtra("quantity")
+        val price = intent.getStringExtra("price")
+        val orderDetailsText = "Order Details:\n\n" +
+                "Cake Type: $cakeType\n" +
+                "Quantity: $quantity\n" +
+                "Price: $price"
+        orderDet.text = orderDetailsText
+    }
+}
+12.game with two players
+activity_main.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
+
+        <Button
+                android:id="@+id/button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="52dp"
+                android:layout_marginTop="216dp"
+                android:text="Player 1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+                android:id="@+id/button2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="216dp"
+                android:layout_marginEnd="36dp"
+                android:text="Player 2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+                android:id="@+id/button3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="60dp"
+                android:layout_marginTop="76dp"
+                android:text="Start"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/button" />
+
+        <Button
+                android:id="@+id/button4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="76dp"
+                android:layout_marginEnd="52dp"
+                android:text="Stop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/button2" />
+
+        <Button
+                android:id="@+id/button5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="156dp"
+                android:layout_marginTop="72dp"
+                android:text="Display"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/button3" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+MainActivity.kt
+
+package com.example.myapplication
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.widget.Button
+import java.util.Calendar
+import android.content.Intent
+
+class MainActivity : AppCompatActivity()
+{
+        private lateinit var p1:Button
+        private lateinit var p2:Button
+        private lateinit var start:Button
+        private lateinit var stop:Button
+        private lateinit var display:Button
+        override fun onCreate(savedInstanceState: Bundle?)
+        {
+                super.onCreate(savedInstanceState)
+                setContentView(R.layout.activity_main)
+
+                p1=findViewById(R.id.button)
+                p2=findViewById(R.id.button2)
+                start=findViewById(R.id.button3)
+                stop=findViewById(R.id.button4)
+                display=findViewById(R.id.button5)
+
+                var started=Calendar.getInstance().time
+                var stopped=Calendar.getInstance().time
+                var selected="";
+                var p1time="0"
+                var p2time="0"
+
+                p1.setOnClickListener()
+                {
+                        selected="p1";
+                }
+
+                p2.setOnClickListener()
+                {
+                        selected="p2";
+                }
+
+                start.setOnClickListener()
+                {
+                        started=Calendar.getInstance().time
+                }
+
+                stop.setOnClickListener()
+                {
+                        stopped=Calendar.getInstance().time
+                        var diffhr=stopped.hours-started.hours
+                        var diffmin=stopped.minutes-started.minutes
+                        var diffsec=stopped.seconds-started.seconds
+                        if(selected=="p1") {
+                                p1time = diffhr.toString() + ":" + diffmin.toString() + ":" + diffsec.toString()
+                        }
+                        if(selected=="p2") {
+                                p2time = diffhr.toString() + ":" + diffmin.toString() + ":" + diffsec.toString()
+                        }
+
+                }
+
+               display.setOnClickListener()
+                {
+                        val intent=Intent(this,HomeActivity::class.java)
+                        intent.putExtra("p1time",p1time)
+                        intent.putExtra("p2time",p2time)
+                        startActivity(intent)
+
+                        selected=""
+                        p1time=""
+                        p2time=""
+                }
+
+
+        }
+}
+
+activity_home.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="96dp"
+                android:layout_marginTop="180dp"
+                android:text="TextView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="96dp"
+                android:layout_marginTop="56dp"
+                android:text="TextView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+HomeActivity.kt
+
+package com.example.myapplication
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.content.Intent
+import android.widget.TextView
+class HomeActivity:AppCompatActivity ()
+{
+        private lateinit var p1:TextView
+        private lateinit var p2:TextView
+        override fun onCreate(savedInstanceState: Bundle?)
+        {
+                super.onCreate(savedInstanceState)
+                setContentView(R.layout.activity_home)
+
+                val intent:Intent=intent
+
+                p1=findViewById(R.id.textView)
+                p2=findViewById(R.id.textView2)
+
+                var p1time=intent.getStringExtra("p1time")
+                var p2time=intent.getStringExtra("p2time")
+
+                p1.setText(p1time);
+                p2.setText(p2time);
+
+        }
+
+}
