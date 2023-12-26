@@ -1,64 +1,25 @@
-class Comp {
-	var name: String = ""
-		get() = field	
-		set(res) {		 
-			field = res
-		}
-}
-class Pomp{
-    var b:Int=1
-    get() = field	
-		set(res) {		 
-			field = res
-		}
-}
-fun main(args: Array<String>) {
-	val c = Comp()
-    val b=Pomp()
-	c.name = "Unknown"
-	println(c.name)		 
-}
-class Comp{
-    var name:String="Default"
-    get()=field
-    set(res){
-        field=res
-}
-}
-class Pomp{
-    var age:Int=1
-    get()=field
-    set(res){
-        field=res
-}
+class User private constructor() {
+    var name: String = ""
+        get() = field.toUpperCase()
+        set(value) {
+            field = value.trim()
+        }
+
+    var age: Int = 0
+        private set
+
+    companion object {
+        fun create(): User {
+            return User()
+        }
+    }
 }
 
-fun main(t:Array<String>){
-    val a=Comp()
-    val b=Pomp()
-    a.name="Unknown"
-    b.age=100
-    println(a.name+" "+b.age)
-}
-class Comp{
-    var name:String="Default"
-    get()=field
-    set(res){
-        field=res
-}
-}
-class Pomp{
-    var age:Int=1
-    get()=field
-    set(res){
-        field=res
-}
-}
-​
-fun main(t:Array<String>){
-    val a=Comp()
-    val b=Pomp()
-    a.name="Unknown"
-    b.age=100
-    println(a.name+" "+b.age)
+fun main() {
+    val user = User.create()
+
+    user.name = "  John Doe  "
+    println("Name: ${user.name}")
+
+    println("Age: ${user.age}")
 }
