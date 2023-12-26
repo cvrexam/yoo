@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity() {
         Loginbtn.setOnClickListener{
             val user = UserET.text.toString()
             val pass = PassET.text.toString()
-            if (user.equals("vathsal14") && pass.equals("12345")) {
+            if (user.equals("user") && pass.equals("pass")) {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.geeksforgeeks.org/play-video-from-url-in-android-using-kotlin/"))
                 intent.putExtra("username", user)
                 intent.putExtra("password", pass)
