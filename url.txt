@@ -1,0 +1,65 @@
+/////////////////////XML/////////////////////////
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <WebView
+        android:id="@+id/webview"
+        android:layout_width="350dp"
+        android:layout_height="282dp"
+        android:layout_marginTop="104dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="156dp"
+        android:layout_marginTop="96dp"
+        android:text="Click"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/webview" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+/////////////////////////KT////////////////////////
+package com.example.url
+
+import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
+
+
+class MainActivity : AppCompatActivity() {
+    private lateinit var Button:Button
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        val web=findViewById<WebView>(R.id.webview)
+        Button=findViewById(R.id.button)
+
+        web.loadUrl("https://www.cricbuzz.com")
+        web.setWebViewClient(WebViewClient())
+
+        Button.setOnClickListener()
+        {
+            val url="https://www.google.com"
+            val uriUrl: Uri = Uri.parse(url)
+            val launchBrowser = Intent(Intent.ACTION_VIEW, uriUrl)
+            startActivity(launchBrowser)
+        }
+
+    }
+}
+//////MANIFEST//////////////////
+<uses-permission android:name="android.permission.INTERNET"/>
